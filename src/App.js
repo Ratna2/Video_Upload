@@ -1,23 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import React, {useState, useEffect} from "react";
+import "./App.css";
+import Card from "./components/Card";
+import { Navbar } from "./components/Navbar";
+import UploadForm from "./components/UploadForm";
+import UploadList from "./components/UploadList";
+import { BACKEND_URI } from "./config/constant";
 
 function App() {
+
+  const [media, setMedia] = useState([])
+
+  useEffect(()=>{
+    getAll()
+  }, [])
+
+  const getAll = ()=>{
+    axios.get(`${BACKEND_URI}/api/media/getAll`).then((result)=>{
+      setMedia(result.data)
+    }).catch(error=>{
+      console.log(error);
+      alert('Some Error occured')
+    })
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar/>
+      <div className="row">
+        <Card name={<UploadForm getall={getAll} />} />
+        <Card name={<UploadList media={media}/>} />
+      </div>
     </div>
   );
 }
